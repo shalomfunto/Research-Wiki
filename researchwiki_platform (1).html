@@ -1,0 +1,2064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResearchWiki - Community-Driven Research Prioritization</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 50%, #16213e 100%);
+            color: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(15, 15, 30, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 0;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00d4ff, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: #00d4ff;
+            transform: translateY(-2px);
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-badge {
+            background: linear-gradient(135deg, #7c3aed, #3b82f6);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .main-content {
+            margin-top: 80px;
+            min-height: calc(100vh - 80px);
+        }
+
+        .screen {
+            display: none;
+            min-height: calc(100vh - 80px);
+            padding: 2rem 0;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .hero-section {
+            padding: 4rem 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.1) 0%, transparent 70%);
+            transform: translateX(-50%);
+            z-index: -1;
+        }
+
+        .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-section {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4ff, #7c3aed);
+            color: white;
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 212, 255, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(0, 212, 255, 0.3);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #00d4ff;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+        }
+
+        .categories-section {
+            padding: 4rem 0;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, #ffffff, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .categories-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .category-card {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(59, 130, 246, 0.1));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #00d4ff, #7c3aed);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .category-card:hover {
+            transform: translateY(-10px);
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(59, 130, 246, 0.2));
+            border-color: rgba(0, 212, 255, 0.3);
+            box-shadow: 0 20px 50px rgba(0, 212, 255, 0.1);
+        }
+
+        .category-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .category-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #00d4ff, #7c3aed);
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .category-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .category-count {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .category-trending {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #00ff88;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Submit Question Screen */
+        .submit-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .form-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 3rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: white;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 1.2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #00d4ff;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .tag-input {
+            position: relative;
+        }
+
+        .tags-display {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .tag {
+            background: linear-gradient(135deg, #7c3aed, #3b82f6);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tag .remove-tag {
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Rankings Screen */
+        .rankings-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .filter-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-tab {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            padding: 0.8rem 1.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-tab.active, .filter-tab:hover {
+            background: linear-gradient(135deg, #7c3aed, #3b82f6);
+            border-color: rgba(124, 58, 237, 0.5);
+            color: white;
+        }
+
+        .podium-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .podium-card {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.1));
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .podium-card.first {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 140, 0, 0.15));
+            border-color: rgba(255, 215, 0, 0.5);
+        }
+
+        .podium-card.second {
+            background: linear-gradient(135deg, rgba(192, 192, 192, 0.15), rgba(169, 169, 169, 0.15));
+            border-color: rgba(192, 192, 192, 0.5);
+        }
+
+        .podium-card.third {
+            background: linear-gradient(135deg, rgba(205, 127, 50, 0.15), rgba(184, 115, 51, 0.15));
+            border-color: rgba(205, 127, 50, 0.5);
+        }
+
+        .podium-rank {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+        }
+
+        .question-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .question-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .question-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(0, 212, 255, 0.3);
+            transform: translateX(10px);
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .question-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .question-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+            flex-wrap: wrap;
+        }
+
+        .vote-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .vote-count {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #00d4ff;
+        }
+
+        .vote-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .vote-btn {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 5px;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+        }
+
+        .vote-btn:hover {
+            color: #00d4ff;
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        .question-tags {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .question-tag {
+            background: rgba(124, 58, 237, 0.2);
+            color: #c4b5fd;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Profile Screen */
+        .profile-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #00d4ff, #7c3aed);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+
+        .profile-details h2 {
+            color: white;
+            margin: 0 0 0.5rem 0;
+            font-size: 2rem;
+        }
+
+        .profile-role, .profile-institution {
+            color: rgba(255, 255, 255, 0.7);
+            margin: 0.25rem 0;
+        }
+
+        .profile-stats {
+            display: flex;
+            gap: 3rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #00d4ff;
+        }
+
+        .badges-section {
+            margin-top: 3rem;
+        }
+
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .badge-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+
+        .badge-card.earned {
+            opacity: 1;
+            background: rgba(0, 212, 255, 0.1);
+            border-color: rgba(0, 212, 255, 0.3);
+        }
+
+        .badge-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .badge-name {
+            font-weight: 600;
+            color: white;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .badge-desc {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Admin Dashboard */
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .admin-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .admin-tab {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .admin-tab.active, .admin-tab:hover {
+            background: linear-gradient(135deg, #7c3aed, #3b82f6);
+            border-color: rgba(124, 58, 237, 0.5);
+            color: white;
+        }
+
+        .admin-section {
+            display: none;
+        }
+
+        .admin-section.active {
+            display: block;
+        }
+
+        .pending-question-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 165, 0, 0.3);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .btn-approve, .btn-reject, .btn-edit {
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-approve {
+            background: linear-gradient(135deg, #00ff88, #00d4ff);
+            color: white;
+        }
+
+        .btn-reject {
+            background: linear-gradient(135deg, #ff4757, #ff6b7a);
+            color: white;
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, #ffa502, #ff7675);
+            color: white;
+        }
+
+        /* Question Detail Screen */
+        .question-detail-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .question-detail-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .question-detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+        }
+
+        .discussion-section {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            padding: 2rem;
+        }
+
+        .comment {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border-left: 3px solid transparent;
+        }
+
+        .comment.reply {
+            margin-left: 3rem;
+            border-left-color: #00d4ff;
+        }
+
+        .comment-header {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            color: white;
+        }
+
+        .comment-badge {
+            background: linear-gradient(135deg, #7c3aed, #3b82f6);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .comment-time {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.8rem;
+        }
+
+        .comment-text {
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .comment-actions {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .comment-btn {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: color 0.3s ease;
+        }
+
+        .comment-btn:hover {
+            color: #00d4ff;
+        }
+
+        .floating-elements {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+        }
+
+        .fab {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #00d4ff, #7c3aed);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(0, 212, 255, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-container, .submit-container, .rankings-container, 
+            .profile-container, .admin-container, .question-detail-container {
+                padding: 0 1rem;
+            }
+
+            .question-header, .profile-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .profile-stats {
+                gap: 2rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .filter-tabs {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .comment.reply {
+                margin-left: 1rem;
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .slide-in {
+            animation: slideIn 0.6s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #00ff88, #00d4ff);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.1);
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #00d4ff, #7c3aed);
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .modal h3 {
+            color: #00d4ff;
+            margin-bottom: 1rem;
+        }
+
+        .modal p {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo" onclick="showScreen('home')">ResearchWiki</div>
+            <ul class="nav-links">
+                <li><a onclick="showScreen('rankings')" class="nav-item">Browse Questions</a></li>
+                <li><a onclick="showScreen('home')" class="nav-item">Categories</a></li>
+                <li><a onclick="showScreen('rankings')" class="nav-item">Leaderboard</a></li>
+                <li><a onclick="showScreen('profile')" class="nav-item">Profile</a></li>
+                <li><a onclick="showScreen('admin')" class="nav-item">Admin</a></li>
+            </ul>
+            <div class="user-section">
+                <div class="user-badge">👑 Researcher</div>
+                <span>Shalom Ojo</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Home Screen -->
+        <div id="home-screen" class="screen active">
+            <section class="hero-section">
+                <div class="hero-container">
+                    <h1 class="hero-title slide-in">Discover & Prioritize Research Questions</h1>
+                    <p class="hero-subtitle slide-in">A community-driven platform where researchers collaborate to identify, discuss, and rank the most critical questions in computing and emerging technology.</p>
+                    
+                    <div class="cta-section slide-in">
+                        <button class="btn btn-primary" onclick="showScreen('submit')">🚀 Submit Question</button>
+                        <button class="btn btn-secondary" onclick="showScreen('rankings')">📊 Explore Rankings</button>
+                    </div>
+
+                    <div class="stats-grid slide-in">
+                        <div class="stat-card">
+                            <div class="stat-number" id="total-questions">1,247</div>
+                            <div class="stat-label">Research Questions</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">892</div>
+                            <div class="stat-label">Active Researchers</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">156</div>
+                            <div class="stat-label">Solved Problems</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">23</div>
+                            <div class="stat-label">Expert Reviews</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="categories-section">
+                <h2 class="section-title">Research Categories</h2>
+                <div class="categories-grid">
+                    <div class="category-card" onclick="filterByCategory('ai')">
+                        <div class="category-icon">🤖</div>
+                        <h3 class="category-title">Artificial Intelligence</h3>
+                        <p class="category-count">342 questions • 89 contributors</p>
+                        <div class="category-trending">🔥 Trending: LLM Safety</div>
+                    </div>
+                    <div class="category-card" onclick="filterByCategory('blockchain')">
+                        <div class="category-icon">⛓️</div>
+                        <h3 class="category-title">Blockchain & Web3</h3>
+                        <p class="category-count">198 questions • 45 contributors</p>
+                        <div class="category-trending">🔥 Trending: Zero-Knowledge Proofs</div>
+                    </div>
+                    <div class="category-card" onclick="filterByCategory('cybersecurity')">
+                        <div class="category-icon">🔐</div>
+                        <h3 class="category-title">Cybersecurity</h3>
+                        <p class="category-count">267 questions • 67 contributors</p>
+                        <div class="category-trending">🔥 Trending: Quantum Cryptography</div>
+                    </div>
+                    <div class="category-card" onclick="filterByCategory('hci')">
+                        <div class="category-icon">👥</div>
+                        <h3 class="category-title">Human-Computer Interaction</h3>
+                        <p class="category-count">145 questions • 34 contributors</p>
+                        <div class="category-trending">🔥 Trending: AR/VR Interfaces</div>
+                    </div>
+                    <div class="category-card" onclick="filterByCategory('cloud')">
+                        <div class="category-icon">☁️</div>
+                        <h3 class="category-title">Cloud & Big Data</h3>
+                        <p class="category-count">189 questions • 52 contributors</p>
+                        <div class="category-trending">🔥 Trending: Edge Computing</div>
+                    </div>
+                    <div class="category-card" onclick="filterByCategory('networking')">
+                        <div class="category-icon">🌐</div>
+                        <h3 class="category-title">Networking & Infrastructure</h3>
+                        <p class="category-count">106 questions • 28 contributors</p>
+                        <div class="category-trending">🔥 Trending: 6G Networks</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Submit Question Screen -->
+        <div id="submit-screen" class="screen">
+            <div class="submit-container">
+                <div class="form-card">
+                    <h1 class="section-title">🚀 Submit New Research Question</h1>
+                    
+                    <form id="question-form" onsubmit="submitQuestion(event)">
+                        <div class="form-group">
+                            <label>Question Title *</label>
+                            <input type="text" id="question-title" placeholder="What specific research question are you proposing?" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Detailed Description *</label>
+                            <textarea id="question-description" placeholder="Provide context, background, and why this question is important..." required></textarea>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Research Category *</label>
+                                <select id="question-category" required>
+                                    <option value="">Select Category</option>
+                                    <option value="ai">Artificial Intelligence</option>
+                                    <option value="blockchain">Blockchain & Web3</option>
+                                    <option value="cybersecurity">Cybersecurity</option>
+                                    <option value="hci">Human-Computer Interaction</option>
+                                    <option value="cloud">Cloud & Big Data</option>
+                                    <option value="networking">Networking & Infrastructure</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Difficulty Level *</label>
+                                <select id="question-level" required>
+                                    <option value="">Select Level</option>
+                                    <option value="bsc">BSc Project</option>
+                                    <option value="msc">MSc Thesis</option>
+                                    <option value="phd">PhD Research</option>
+                                    <option value="postdoc">Postdoc Level</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Tags (Optional)</label>
+                            <div class="tag-input">
+                                <input type="text" id="tags-input" placeholder="Press Enter to add tags (e.g., machine learning, privacy, healthcare)">
+                                <div class="tags-display" id="tags-display"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Related Publications (Optional)</label>
+                            <textarea id="question-publications" placeholder="List any key papers or publications related to this question..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">🚀 Submit Question</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rankings Screen -->
+        <div id="rankings-screen" class="screen">
+            <div class="rankings-container">
+                <h1 class="section-title">📊 Research Question Rankings</h1>
+                
+                <div class="filter-section">
+                    <div class="filter-tabs">
+                        <div class="filter-tab active" onclick="setFilter('all')">All Time</div>
+                        <div class="filter-tab" onclick="setFilter('trending')">Trending</div>
+                        <div class="filter-tab" onclick="setFilter('recent')">Recent</div>
+                        <div class="filter-tab" onclick="setFilter('expert')">Expert Reviewed</div>
+                        <div class="filter-tab" onclick="setFilter('unsolved')">Unsolved</div>
+                    </div>
+                </div>
+
+                <!-- Top 3 Podium -->
+                <div class="podium-section">
+                    <div class="podium-card first">
+                        <div class="podium-rank">🥇</div>
+                        <h3>AI Alignment in LLMs</h3>
+                        <p>How can we ensure AI alignment while maintaining creativity?</p>
+                        <div class="vote-count">127 votes</div>
+                    </div>
+                    <div class="podium-card second">
+                        <div class="podium-rank">🥈</div>
+                        <h3>Blockchain Scalability</h3>
+                        <p>What are the scalability limits of blockchain for IoT?</p>
+                        <div class="vote-count">89 votes</div>
+                    </div>
+                    <div class="podium-card third">
+                        <div class="podium-rank">🥉</div>
+                        <h3>Privacy-Preserving ML</h3>
+                        <p>How to develop privacy-preserving ML for healthcare?</p>
+                        <div class="vote-count">76 votes</div>
+                    </div>
+                </div>
+
+                <!-- Extended Rankings -->
+                <div class="question-list" id="question-list">
+                    <!-- Questions will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Screen -->
+        <div id="profile-screen" class="screen">
+            <div class="profile-container">
+                <div class="profile-header">
+                    <div class="profile-info">
+                        <div class="profile-avatar">👨‍💻</div>
+                        <div class="profile-details">
+                            <h2>Shalom Ojo</h2>
+                            <p class="profile-role">🎓 Computer Science Student</p>
+                            <p class="profile-institution">Obafemi Awolowo University</p>
+                        </div>
+                    </div>
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <div class="stat-value" id="user-questions">12</div>
+                            <div class="stat-label">Questions</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">89</div>
+                            <div class="stat-label">Votes Cast</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">156</div>
+                            <div class="stat-label">Comments</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="badges-section">
+                    <h3 style="color: #00d4ff; margin-bottom: 2rem; font-size: 1.5rem;">🏆 Achievement Badges</h3>
+                    <div class="badges-grid">
+                        <div class="badge-card earned">
+                            <div class="badge-icon">🚀</div>
+                            <div class="badge-name">First Question</div>
+                            <div class="badge-desc">Submitted your first research question</div>
+                        </div>
+                        <div class="badge-card earned">
+                            <div class="badge-icon">🗳️</div>
+                            <div class="badge-name">Active Voter</div>
+                            <div class="badge-desc">Cast 50+ votes on questions</div>
+                        </div>
+                        <div class="badge-card">
+                            <div class="badge-icon">⭐</div>
+                            <div class="badge-name">Expert Reviewer</div>
+                            <div class="badge-desc">Provide 10 expert reviews</div>
+                        </div>
+                        <div class="badge-card">
+                            <div class="badge-icon">👑</div>
+                            <div class="badge-name">Top Contributor</div>
+                            <div class="badge-desc">Rank in top 10 contributors</div>
+                        </div>
+                        <div class="badge-card earned">
+                            <div class="badge-icon">💬</div>
+                            <div class="badge-name">Discussion Leader</div>
+                            <div class="badge-desc">Started 5+ meaningful discussions</div>
+                        </div>
+                        <div class="badge-card">
+                            <div class="badge-icon">🎯</div>
+                            <div class="badge-name">Problem Solver</div>
+                            <div class="badge-desc">Contributed to solving research questions</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Dashboard -->
+        <div id="admin-screen" class="screen">
+            <div class="admin-container">
+                <h1 class="section-title">⚙️ Admin Dashboard</h1>
+                
+                <div class="admin-tabs">
+                    <div class="admin-tab active" onclick="showAdminSection('pending')">⏳ Pending Questions (5)</div>
+                    <div class="admin-tab" onclick="showAdminSection('users')">👥 Manage Users</div>
+                    <div class="admin-tab" onclick="showAdminSection('reviews')">⭐ Expert Reviews</div>
+                    <div class="admin-tab" onclick="showAdminSection('analytics')">📊 Analytics</div>
+                </div>
+
+                <div id="pending-section" class="admin-section active">
+                    <div class="pending-question-card">
+                        <div class="question-header">
+                            <div>
+                                <h3 class="question-title">How can quantum computing accelerate drug discovery processes?</h3>
+                                <div class="question-meta">
+                                    <span>👤 Maria Santos (Student)</span>
+                                    <span>📅 Submitted 2 hours ago</span>
+                                    <span>🏷️ Quantum Computing, Healthcare</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="admin-actions">
+                            <button class="btn-approve" onclick="approveQuestion(this)">✅ Approve</button>
+                            <button class="btn-reject" onclick="rejectQuestion(this)">❌ Reject</button>
+                            <button class="btn-edit" onclick="requestEdit(this)">✏️ Request Edit</button>
+                        </div>
+                    </div>
+
+                    <div class="pending-question-card">
+                        <div class="question-header">
+                            <div>
+                                <h3 class="question-title">What are the ethical implications of AI-generated content in academic research?</h3>
+                                <div class="question-meta">
+                                    <span>👤 Dr. James Wilson (Researcher)</span>
+                                    <span>📅 Submitted 4 hours ago</span>
+                                    <span>🏷️ AI Ethics, Academic Integrity</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="admin-actions">
+                            <button class="btn-approve" onclick="approveQuestion(this)">✅ Approve</button>
+                            <button class="btn-reject" onclick="rejectQuestion(this)">❌ Reject</button>
+                            <button class="btn-edit" onclick="requestEdit(this)">✏️ Request Edit</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="users-section" class="admin-section">
+                    <p style="color: rgba(255,255,255,0.7); text-align: center; padding: 3rem;">User management features coming soon...</p>
+                </div>
+
+                <div id="reviews-section" class="admin-section">
+                    <p style="color: rgba(255,255,255,0.7); text-align: center; padding: 3rem;">Expert review management coming soon...</p>
+                </div>
+
+                <div id="analytics-section" class="admin-section">
+                    <p style="color: rgba(255,255,255,0.7); text-align: center; padding: 3rem;">Analytics dashboard coming soon...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question Detail Screen -->
+        <div id="question-detail-screen" class="screen">
+            <div class="question-detail-container">
+                <div class="question-detail-card">
+                    <div class="question-detail-header">
+                        <div>
+                            <h1 class="question-title" id="detail-title">How can we ensure AI alignment in large language models while maintaining their creative capabilities?</h1>
+                            <div class="question-meta">
+                                <span>👤 Dr. Sarah Chen</span>
+                                <span>📅 2 days ago</span>
+                                <span>🎓 PhD Level</span>
+                                <span>🔖 AI Safety</span>
+                            </div>
+                        </div>
+                        <div class="vote-section">
+                            <div class="vote-buttons">
+                                <button class="vote-btn" onclick="vote('up')">▲</button>
+                            </div>
+                            <div class="vote-count" id="detail-votes">127</div>
+                            <div class="vote-buttons">
+                                <button class="vote-btn" onclick="vote('down')">▼</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="question-description">
+                        <p style="color: rgba(255,255,255,0.9); line-height: 1.8; font-size: 1.1rem;">
+                            As large language models become increasingly powerful and integrated into various applications, ensuring they remain aligned with human values while preserving their creative and innovative capabilities presents a significant challenge. This question explores the tension between safety constraints and creative freedom in AI systems, seeking methodologies that can achieve both objectives simultaneously.
+                        </p>
+                    </div>
+
+                    <div class="question-tags">
+                        <span class="question-tag">AI Safety</span>
+                        <span class="question-tag">LLM</span>
+                        <span class="question-tag">Alignment</span>
+                        <span class="question-tag">Ethics</span>
+                        <span class="question-tag">Creativity</span>
+                    </div>
+                </div>
+
+                <div class="discussion-section">
+                    <h3 style="color: #00d4ff; margin-bottom: 2rem;">💬 Discussion Thread</h3>
+                    
+                    <div class="comment">
+                        <div class="comment-header">
+                            <span class="comment-author">👤 Dr. Lisa Wang</span>
+                            <span class="comment-badge">Expert</span>
+                            <span class="comment-time">2 hours ago</span>
+                        </div>
+                        <p class="comment-text">This is a fascinating question! I'd recommend looking into Constitutional AI approaches, particularly the work by Anthropic on using AI feedback to train more aligned models. The key insight is that we can maintain creativity while establishing clear constitutional principles.</p>
+                        <div class="comment-actions">
+                            <button class="comment-btn">👍 12</button>
+                            <button class="comment-btn">💬 Reply</button>
+                        </div>
+                    </div>
+
+                    <div class="comment reply">
+                        <div class="comment-header">
+                            <span class="comment-author">👤 Dr. Sarah Chen</span>
+                            <span class="comment-badge">Author</span>
+                            <span class="comment-time">1 hour ago</span>
+                        </div>
+                        <p class="comment-text">@Dr. Lisa Wang Thanks for the pointer! Constitutional AI is indeed promising. I'm particularly interested in how we might measure the trade-offs between alignment and creativity quantitatively. Do you know of any metrics that have been proposed?</p>
+                        <div class="comment-actions">
+                            <button class="comment-btn">👍 8</button>
+                            <button class="comment-btn">💬 Reply</button>
+                        </div>
+                    </div>
+
+                    <div class="comment">
+                        <div class="comment-header">
+                            <span class="comment-author">👤 Alex Rodriguez</span>
+                            <span class="comment-badge">Student</span>
+                            <span class="comment-time">30 minutes ago</span>
+                        </div>
+                        <p class="comment-text">This could be a great area for my MSc thesis! Are there any specific sub-problems within this question that might be suitable for a master's level project?</p>
+                        <div class="comment-actions">
+                            <button class="comment-btn">👍 5</button>
+                            <button class="comment-btn">💬 Reply</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Floating Action Button -->
+    <div class="floating-elements">
+        <button class="fab pulse" title="Submit New Question" onclick="showScreen('submit')">+</button>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="modal">
+        <div class="modal-content">
+            <h3>🎉 Success!</h3>
+            <p id="modal-message">Your question has been submitted successfully and is under review.</p>
+            <button class="btn btn-primary" onclick="closeModal()">Continue</button>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let currentScreen = 'home';
+        let currentFilter = 'all';
+        let tags = [];
+        let questions = [
+            {
+                id: 1,
+                title: "How can we ensure AI alignment in large language models while maintaining their creative capabilities?",
+                author: "Dr. Sarah Chen",
+                votes: 127,
+                comments: 23,
+                level: "PhD Level",
+                category: "ai",
+                tags: ["AI Safety", "LLM", "Alignment", "Ethics"],
+                timeAgo: "2 days ago"
+            },
+            {
+                id: 2,
+                title: "What are the scalability limits of current blockchain consensus mechanisms for IoT applications?",
+                author: "Prof. Michael Torres",
+                votes: 89,
+                comments: 18,
+                level: "MSc Level",
+                category: "blockchain",
+                tags: ["Blockchain", "IoT", "Scalability", "Consensus"],
+                timeAgo: "1 week ago"
+            },
+            {
+                id: 3,
+                title: "How can we develop privacy-preserving machine learning models for healthcare data?",
+                author: "Alex Rodriguez",
+                votes: 76,
+                comments: 31,
+                level: "BSc Level",
+                category: "ai",
+                tags: ["Privacy", "Healthcare", "Machine Learning", "GDPR"],
+                timeAgo: "3 days ago"
+            },
+            {
+                id: 4,
+                title: "What are the key challenges in implementing quantum-resistant cryptography in existing systems?",
+                author: "Dr. Emily Zhang",
+                votes: 64,
+                comments: 15,
+                level: "PhD Level",
+                category: "cybersecurity",
+                tags: ["Quantum", "Cryptography", "Security", "Migration"],
+                timeAgo: "5 days ago"
+            },
+            {
+                id: 5,
+                title: "How can edge computing optimize real-time decision making in autonomous vehicles?",
+                author: "Sarah Kim",
+                votes: 52,
+                comments: 12,
+                level: "MSc Level",
+                category: "cloud",
+                tags: ["Edge Computing", "Autonomous Vehicles", "Real-time", "Optimization"],
+                timeAgo: "1 week ago"
+            }
+        ];
+
+        // Screen navigation
+        function showScreen(screenName) {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+
+            // Show selected screen
+            document.getElementById(screenName + '-screen').classList.add('active');
+
+            // Update navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            currentScreen = screenName;
+
+            // Load content based on screen
+            if (screenName === 'rankings') {
+                loadQuestions();
+            }
+        }
+
+        // Question submission
+        function submitQuestion(event) {
+            event.preventDefault();
+            
+            const title = document.getElementById('question-title').value;
+            const description = document.getElementById('question-description').value;
+            const category = document.getElementById('question-category').value;
+            const level = document.getElementById('question-level').value;
+            
+            // Simulate submission
+            const newQuestion = {
+                id: questions.length + 1,
+                title: title,
+                author: "Shalom Ojo",
+                votes: 0,
+                comments: 0,
+                level: level.charAt(0).toUpperCase() + level.slice(1) + " Level",
+                category: category,
+                tags: tags,
+                timeAgo: "Just now"
+            };
+
+            questions.unshift(newQuestion);
+
+            // Update stats
+            const totalQuestions = document.getElementById('total-questions');
+            const userQuestions = document.getElementById('user-questions');
+            
+            totalQuestions.textContent = parseInt(totalQuestions.textContent) + 1;
+            userQuestions.textContent = parseInt(userQuestions.textContent) + 1;
+
+            // Reset form
+            document.getElementById('question-form').reset();
+            tags = [];
+            document.getElementById('tags-display').innerHTML = '';
+
+            // Show success modal
+            document.getElementById('modal-message').textContent = 'Your question has been submitted successfully and is under review!';
+            document.getElementById('success-modal').classList.add('show');
+
+            // Auto redirect after 2 seconds
+            setTimeout(() => {
+                closeModal();
+                showScreen('rankings');
+            }, 2000);
+        }
+
+        // Tags management
+        document.getElementById('tags-input').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                const tagValue = this.value.trim();
+                if (tagValue && !tags.includes(tagValue)) {
+                    tags.push(tagValue);
+                    updateTagsDisplay();
+                    this.value = '';
+                }
+            }
+        });
+
+        function updateTagsDisplay() {
+            const display = document.getElementById('tags-display');
+            display.innerHTML = tags.map(tag => 
+                `<span class="tag">${tag} <span class="remove-tag" onclick="removeTag('${tag}')">×</span></span>`
+            ).join('');
+        }
+
+        function removeTag(tagToRemove) {
+            tags = tags.filter(tag => tag !== tagToRemove);
+            updateTagsDisplay();
+        }
+
+        // Rankings and filtering
+        function setFilter(filter) {
+            currentFilter = filter;
+            
+            // Update tab appearance
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            loadQuestions();
+        }
+
+        function filterByCategory(category) {
+            showScreen('rankings');
+            setTimeout(() => {
+                // Filter questions by category
+                loadQuestions(category);
+            }, 100);
+        }
+
+        function loadQuestions(categoryFilter = null) {
+            let filteredQuestions = [...questions];
+
+            // Apply category filter
+            if (categoryFilter) {
+                filteredQuestions = filteredQuestions.filter(q => q.category === categoryFilter);
+            }
+
+            // Apply current filter
+            switch (currentFilter) {
+                case 'trending':
+                    filteredQuestions.sort((a, b) => {
+                        const aScore = a.votes + a.comments * 2;
+                        const bScore = b.votes + b.comments * 2;
+                        return bScore - aScore;
+                    });
+                    break;
+                case 'recent':
+                    // Already in chronological order
+                    break;
+                case 'expert':
+                    filteredQuestions = filteredQuestions.filter(q => 
+                        q.author.includes('Dr.') || q.author.includes('Prof.')
+                    );
+                    break;
+                case 'unsolved':
+                    // Simulate unsolved filter
+                    filteredQuestions = filteredQuestions.filter(q => q.votes < 100);
+                    break;
+                default:
+                    filteredQuestions.sort((a, b) => b.votes - a.votes);
+            }
+
+            displayQuestions(filteredQuestions);
+        }
+
+        function displayQuestions(questionList) {
+            const container = document.getElementById('question-list');
+            container.innerHTML = questionList.map((question, index) => `
+                <div class="question-card" onclick="showQuestionDetail(${question.id})">
+                    <div class="question-header">
+                        <div>
+                            <h3 class="question-title">${question.title}</h3>
+                            <div class="question-meta">
+                                <span>👤 ${question.author}</span>
+                                <span>📅 ${question.timeAgo}</span>
+                                <span>💬 ${question.comments} comments</span>
+                                <span>🎓 ${question.level}</span>
+                            </div>
+                        </div>
+                        <div class="vote-section">
+                            <div class="vote-buttons">
+                                <button class="vote-btn" onclick="vote('up', ${question.id}, event)">▲</button>
+                            </div>
+                            <div class="vote-count" id="votes-${question.id}">${question.votes}</div>
+                            <div class="vote-buttons">
+                                <button class="vote-btn" onclick="vote('down', ${question.id}, event)">▼</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question-tags">
+                        ${question.tags.map(tag => `<span class="question-tag">${tag}</span>`).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Voting functionality
+        function vote(direction, questionId, event) {
+            if (event) {
+                event.stopPropagation();
+            }
+
+            const question = questions.find(q => q.id === questionId);
+            const voteElement = document.getElementById(`votes-${questionId}`) || 
+                               document.getElementById('detail-votes');
+
+            if (question && voteElement) {
+                const change = direction === 'up' ? 1 : -1;
+                question.votes += change;
+                voteElement.textContent = question.votes;
+                
+                // Visual feedback
+                voteElement.style.color = direction === 'up' ? '#00ff88' : '#ff4757';
+                setTimeout(() => {
+                    voteElement.style.color = '#00d4ff';
+                }, 1000);
+            }
+        }
+
+        // Question detail view
+        function showQuestionDetail(questionId) {
+            const question = questions.find(q => q.id === questionId);
+            if (question) {
+                document.getElementById('detail-title').textContent = question.title;
+                document.getElementById('detail-votes').textContent = question.votes;
+                showScreen('question-detail');
+            }
+        }
+
+        // Admin functions
+        function showAdminSection(section) {
+            // Remove active class from all tabs
+            document.querySelectorAll('.admin-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+            
+            // Hide all sections
+            document.querySelectorAll('.admin-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(section + '-section').classList.add('active');
+        }
+
+        function approveQuestion(button) {
+            const card = button.closest('.pending-question-card');
+            card.style.borderColor = 'rgba(0, 255, 136, 0.5)';
+            card.style.background = 'rgba(0, 255, 136, 0.1)';
+            
+            // Update button states
+            button.textContent = '✅ Approved';
+            button.style.background = 'rgba(0, 255, 136, 0.3)';
+            button.disabled = true;
+            
+            // Disable other buttons
+            card.querySelectorAll('button').forEach(btn => {
+                if (btn !== button) btn.disabled = true;
+            });
+
+            // Show success message
+            showNotification('Question approved successfully!', 'success');
+        }
+
+        function rejectQuestion(button) {
+            const card = button.closest('.pending-question-card');
+            card.style.borderColor = 'rgba(255, 71, 87, 0.5)';
+            card.style.background = 'rgba(255, 71, 87, 0.1)';
+            
+            // Update button states
+            button.textContent = '❌ Rejected';
+            button.style.background = 'rgba(255, 71, 87, 0.3)';
+            button.disabled = true;
+            
+            // Disable other buttons
+            card.querySelectorAll('button').forEach(btn => {
+                if (btn !== button) btn.disabled = true;
+            });
+
+            showNotification('Question rejected.', 'error');
+        }
+
+        function requestEdit(button) {
+            const card = button.closest('.pending-question-card');
+            card.style.borderColor = 'rgba(255, 165, 2, 0.5)';
+            card.style.background = 'rgba(255, 165, 2, 0.1)';
+            
+            // Update button states
+            button.textContent = '✏️ Edit Requested';
+            button.style.background = 'rgba(255, 165, 2, 0.3)';
+            button.disabled = true;
+            
+            // Disable other buttons
+            card.querySelectorAll('button').forEach(btn => {
+                if (btn !== button) btn.disabled = true;
+            });
+
+            showNotification('Edit request sent to author.', 'warning');
+        }
+
+        // Notification system
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 2rem;
+                background: ${type === 'success' ? 'linear-gradient(135deg, #00ff88, #00d4ff)' : 
+                            type === 'error' ? 'linear-gradient(135deg, #ff4757, #ff6b7a)' : 
+                            'linear-gradient(135deg, #ffa502, #ff7675)'};
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 12px;
+                z-index: 3000;
+                font-weight: 600;
+                animation: slideInRight 0.3s ease;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Modal management
+        function closeModal() {
+            document.getElementById('success-modal').classList.remove('show');
+        }
+
+        // Initialize page
+        function initializePage() {
+            // Load initial questions in rankings
+            loadQuestions();
+            
+            // Add real-time stats updates
+            setInterval(() => {
+                if (Math.random() > 0.8) {
+                    const statNumbers = document.querySelectorAll('.stat-number');
+                    const randomStat = statNumbers[Math.floor(Math.random() * statNumbers.length)];
+                    if (randomStat && randomStat.id !== 'user-questions') {
+                        const currentValue = parseInt(randomStat.textContent);
+                        randomStat.textContent = currentValue + (Math.random() > 0.5 ? 1 : 0);
+                        randomStat.style.color = '#00ff88';
+                        setTimeout(() => {
+                            randomStat.style.color = '#00d4ff';
+                        }, 1000);
+                    }
+                }
+            }, 5000);
+
+            // Add smooth scrolling for navigation
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    if (this.getAttribute('href').startsWith('#') && 
+                        !this.hasAttribute('onclick')) {
+                        e.preventDefault();
+                        const target = document.querySelector(this.getAttribute('href'));
+                        if (target) {
+                            target.scrollIntoView({
+                                behavior: 'smooth'
+                            });
+                        }
+                    }
+                });
+            });
+
+            // Add keyboard shortcuts
+            document.addEventListener('keydown', function(event) {
+                // Alt + S for Submit Question
+                if (event.altKey && event.key === 's') {
+                    event.preventDefault();
+                    showScreen('submit');
+                }
+                
+                // Alt + R for Rankings
+                if (event.altKey && event.key === 'r') {
+                    event.preventDefault();
+                    showScreen('rankings');
+                }
+                
+                // Alt + H for Home
+                if (event.altKey && event.key === 'h') {
+                    event.preventDefault();
+                    showScreen('home');
+                }
+
+                // ESC to close modals
+                if (event.key === 'Escape') {
+                    closeModal();
+                }
+            });
+
+            // Add intersection observer for animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all animatable elements
+            document.querySelectorAll('.category-card, .question-card, .stat-card, .badge-card').forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'all 0.6s ease';
+                observer.observe(card);
+            });
+
+            // Add category card interactions
+            document.querySelectorAll('.category-card').forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'translateY(-10px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+            // Add enhanced voting feedback
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('vote-btn')) {
+                    const button = e.target;
+                    const originalText = button.textContent;
+                    
+                    // Create ripple effect
+                    const ripple = document.createElement('div');
+                    ripple.style.cssText = `
+                        position: absolute;
+                        border-radius: 50%;
+                        background: rgba(0, 212, 255, 0.6);
+                        transform: scale(0);
+                        animation: ripple 0.6s linear;
+                        pointer-events: none;
+                    `;
+                    
+                    const rect = button.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    ripple.style.width = ripple.style.height = size + 'px';
+                    ripple.style.left = (rect.width / 2 - size / 2) + 'px';
+                    ripple.style.top = (rect.height / 2 - size / 2) + 'px';
+                    
+                    button.style.position = 'relative';
+                    button.style.overflow = 'hidden';
+                    button.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        if (button.contains(ripple)) {
+                            button.removeChild(ripple);
+                        }
+                    }, 600);
+                }
+            });
+
+            console.log('🚀 ResearchWiki platform initialized successfully!');
+        }
+
+        // Add CSS for animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+
+            @keyframes slideOutRight {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+
+            .question-card {
+                transition: all 0.3s ease;
+            }
+
+            .question-card:hover {
+                transform: translateX(10px);
+                box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+            }
+
+            .category-card {
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .vote-btn:active {
+                transform: scale(0.9);
+            }
+
+            .btn:active {
+                transform: scale(0.98);
+            }
+
+            .fab:active {
+                transform: scale(0.95);
+            }
+
+            /* Improved mobile responsiveness */
+            @media (max-width: 768px) {
+                .podium-section {
+                    grid-template-columns: 1fr;
+                }
+                
+                .profile-stats {
+                    flex-direction: column;
+                    gap: 1rem;
+                }
+                
+                .admin-tabs {
+                    grid-template-columns: 1fr;
+                }
+                
+                .filter-tabs {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+
+            /* Enhanced focus states for accessibility */
+            .btn:focus,
+            .vote-btn:focus,
+            .filter-tab:focus,
+            .admin-tab:focus {
+                outline: 2px solid #00d4ff;
+                outline-offset: 2px;
+            }
+
+            input:focus,
+            select:focus,
+            textarea:focus {
+                box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.3);
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initializePage);
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (event) => {
+            const modal = document.getElementById('success-modal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
